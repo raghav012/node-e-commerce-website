@@ -1,0 +1,74 @@
+1)there is package to downlad name express-validator
+
+2) then we normally add it to router file as we check there only what there is validation problem aur not
+      so we include it
+     **const { body } = require('express-validator/check');
+     so we can use both body and one more there check to validate data 
+
+3) is it done like this
+     *****router.post(
+  '/edit-product',
+  [
+    body('title')
+      .isString()
+      .isLength({ min: 3 })
+      .trim(),
+   
+    body('price').isFloat(),
+    body('description')
+      .isLength({ min: 5, max: 400 })
+      .trim()
+  ],}  
+
+  check('email')
+        .isEmail()
+        .withMessage('Please enter a valid email.')
+        .normalizeEmail(),   
+         .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error('Passwords have to match!');
+        }
+        return true;
+      })
+ a)it is included in the rout file and then with help of body (we add which value we want to check)
+      .isString checks for valid string if yes return no error else erro
+      .isLength check to min Length
+      .trim  is used to remove extra spaces and make it simple
+       .isFloat to check float value
+       isEmail check for valid email
+       withMessage take what message we wnt to print as error
+       .normalizeEmail make it lower case and remove spaces
+       .custom allow to add our own user define validator etc
+      value !== req.body.password  this is done to check if the confirm password is same as that of password
+
+
+ b) at controller we handle this error as 
+    
+     we include it as   const { validationResult } = require('express-validator/check');
+
+// this here will retrive the error send from route file
+     const errors = validationResult(req);
+
+  // checking if there is error ao not  
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    //if there is error then we render that data and show the error 
+    return res.status(422).render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/edit-product',
+      editing: false,
+      hasError: true,
+      // this will help us to show the old value if only one value is correct so that we have not t0 write everthing again
+      product: {
+        title: title,
+        price: price,
+        description: description
+      },
+      // slect the paticular msg from error objects
+      errorMessage: errors.array()[0].msg,
+      // pass the whole error array inside it so as to find error in any particular filed 
+      // validationErrors.find(e => e.param === 'email')  this is how we use it in form in ejs file
+      validationErrors: errors.array()
+    });
+  }
+
