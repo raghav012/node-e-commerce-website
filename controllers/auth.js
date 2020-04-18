@@ -14,7 +14,7 @@ const {validationResult}=require('express-validator/check');
 // this is the setup which tell node that it has permission to use this sendgrid
 const transporter =nodemailer.createTransport(sendgridTransport({
   auth:{
-    api_key:'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'
+    api_key:'put your own id here'
   }
 }));
 
